@@ -1,47 +1,59 @@
-# OpenVAS-Report-Generator-in-Python
-This project was inspired by the need to automate OpenVAS report generation and is provided as-is for educational purposes.
-# OpenVAS Report Generation Bot
+# OpenVAS Report Generator (Python)
 
-This project provides a Python script to automate the generation of reports from OpenVAS scans using the OpenVAS API. It interacts with the OpenVAS server to initiate scans, retrieve scan results, and generate reports in various formats.
+Production-oriented CLI for generating OpenVAS/GVM reports with safer defaults, configuration via environment variables, and test coverage.
 
-## Features
+## What changed
 
-- Launch OpenVAS scans and retrieve scan results.
-- Generate reports in different formats supported by OpenVAS.
-- Automate the process of report generation from the command line.
+- Converted a single script into an installable Python package.
+- Added a command-line interface (`openvas-report`).
+- Added stricter configuration validation.
+- Added structured logging and polling controls.
+- Added unit tests for core configuration/client behavior.
 
-## Prerequisites
+## Project layout
 
-- OpenVAS server is installed and configured.
-- Python 3.x is installed.
+- `src/openvas_report_generator/config.py` – runtime configuration and env parsing.
+- `src/openvas_report_generator/client.py` – OpenVAS API client.
+- `src/openvas_report_generator/cli.py` – CLI entrypoint.
+- `tests/` – unit tests.
 
-## Installation
+## Quick start
 
-1. Clone this repository:
+### 1) Install
 
-   ```bash
-   git clone https://github.com/your-username/openvas-report-bot.git
+```bash
+python -m pip install -e .
+```
 
-   Install the required packages:
-   pip install requests
+### 2) Configure environment
 
-   Configure
-   Modify the script openvas_report_bot.py with your OpenVAS server details and credentials:
+```bash
+export OPENVAS_API_URL="https://your-openvas-server:9392"
+export OPENVAS_USERNAME="your-username"
+export OPENVAS_PASSWORD="your-password"
+# Optional overrides:
+# export OPENVAS_VERIFY_TLS="true"
+# export OPENVAS_TIMEOUT_SECONDS="30"
+# export OPENVAS_POLL_INTERVAL_SECONDS="5"
+# export OPENVAS_MAX_POLL_ATTEMPTS="120"
+```
 
-API_URL = "https://your-openvas-server:9392"
-API_USERNAME = "your-username"
-API_PASSWORD = "your-password"
+### 3) Generate a report
 
-Usage
-Launch a terminal and navigate to the project directory.
-Run the script to generate a report:
-python openvas_report_bot.py
+```bash
+openvas-report \
+  --task-id "<task-id>" \
+  --report-format-id "<report-format-id>" \
+  --output "scan_reports/scan_report.pdf"
+```
+
+## Notes for production use
+
+- Keep TLS verification enabled (`OPENVAS_VERIFY_TLS=true`) and trust your CA chain.
+- Inject credentials through a secret manager or CI/CD secret store.
+- Run this CLI from a restricted service account.
+- Add integration tests against a non-production OpenVAS instance.
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
 
-The script uses the OpenVAS API to interact with the OpenVAS server. Ensure that the API URL and credentials are accurate.
-This project is a basic example and might require adjustments for your specific use case.
-Error handling, security considerations, and enhancements should be applied for production use.
-
-
+MIT (add a `LICENSE` file if your organization requires one explicitly in-repo).
